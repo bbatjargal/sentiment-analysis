@@ -2,9 +2,9 @@
 
 This is a group project of Machine Learning course at MUM in May 2018. Group members:
 
-+ Batjargal Bayarsaikhan (Alex)
-+ Boldkhuu Batbaatar
-+ Unubold Tumenbayar 
++ [Batjargal Bayarsaikhan (Alex)](https://github.com/bbatjargal/)
++ [Boldkhuu Batbaatar](https://github.com/boldkhuu/)
++ [Unubold Tumenbayar]
 
 
 # Project idea
