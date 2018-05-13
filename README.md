@@ -1,4 +1,4 @@
-# sentiment-analysis
+# About
 
 This is a group project of Machine Learning course at MUM in May 2018. Group members:
 
