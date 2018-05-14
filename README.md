@@ -4,7 +4,7 @@ This is a group project of Machine Learning course at MUM in May 2018. Group mem
 
 + [Batjargal Bayarsaikhan (Alex)](https://github.com/bbatjargal/)
 + [Boldkhuu Batbaatar](https://github.com/boldkhuu/)
-+ [Unubold Tumenbayar]
++ [Unubold Tumenbayar](https://github.com/UnuboldTumenbayar/)
 
 
 # Project idea
