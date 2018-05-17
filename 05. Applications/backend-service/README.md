@@ -12,3 +12,7 @@
 ## Native Setup
 1. Anaconda distribution of python 3.6
 2. 'pip install web.py==0.40-dev1' which installs Web.py for Python 3
+
+## For local testing
+1. Open docker terminal and navigate to `/path/to/sentiment-analysis/05. Applications/backend-service/sentiment`
+2. Run 'python sentiment_api.py'
