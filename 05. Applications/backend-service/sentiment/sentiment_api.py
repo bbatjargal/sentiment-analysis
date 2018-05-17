@@ -3,10 +3,11 @@
 """
 
 import web
-#import sys,os
+#imprt sys,os
 import json
 import sentiment_model as model
 from fb_util import FbUserApi
+from joblib import Parallel, delayed
 
 urls = (
     '/sentiment', 'SentimentApi',
@@ -36,16 +37,15 @@ class FriendInfo:
 
         return json.dumps(result)
 
-
 class Sentiment:
     def predictAll(self, friends):
         for friend in friends:
             positive = 0
             lenPosts = len(friend["posts"])
-            for post in friend["posts"]:
-                isPositive = model.predictPositive(inputText=post)
-                if isPositive:
-                    positive += 1
+
+            if lenPosts > 0:
+                results = Parallel(n_jobs=lenPosts, backend='threading')(delayed(self.processPredict)(item) for item in friend["posts"])
+                positive = sum(1 for x in results if x == True)
 
             friend["posts"] = {
                 "positive": positive,
@@ -53,6 +53,8 @@ class Sentiment:
             }
         return friends
 
+    def processPredict(self, item):
+        return model.predictPositive(inputText=item)
 
 if __name__ == "__main__":
     app.run()
