@@ -7,6 +7,7 @@
 3. Run `docker build . -t sentiment-api`
 4. Run `docker run -p 8180:8180 sentiment-api`
 5. Access `http://0.0.0.0:8180/sentiment?inputtext=i love it` from your browser [assuming you are on windows and docker-machine has that IP. Otherwise just use localhost]
+6. OR access 'http://0.0.0.0:8180/getfriendinfo?accesstoken=YOUR_FB_ACCESS_TOKEN&userid=YOUR_FB_USER_ID' from your browser [assuming you are on windows and docker-machine has that IP. Otherwise just use localhost]
 
 ## Native Setup
 1. Anaconda distribution of python 3.6
