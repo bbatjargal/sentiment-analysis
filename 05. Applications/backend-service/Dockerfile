@@ -1,4 +1,4 @@
-FROM continuumio/anaconda:5.1.0
+FROM continuumio/anaconda3:5.1.0
 MAINTAINER Group 2, https://github.com/bbatjargal/sentiment-analysis
 COPY sentiment/ /usr/local/python/
 EXPOSE 8180
