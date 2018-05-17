@@ -15,9 +15,9 @@ iterations = 100000
 
 
 wordsList = np.load('wordsList.npy').tolist()
-wordsList = [word.decode('UTF-8') for word in wordsList] #Encode words as UTF-8
+wordsList = [word.decode('UTF-8')
+             for word in wordsList]  # Encode words as UTF-8
 wordVectors = np.load('wordVectors.npy')
-
 
 
 tf.reset_default_graph()
@@ -25,8 +25,9 @@ tf.reset_default_graph()
 labels = tf.placeholder(tf.float32, [batchSize, numClasses])
 input_data = tf.placeholder(tf.int32, [batchSize, maxSeqLength])
 
-data = tf.Variable(tf.zeros([batchSize, maxSeqLength, numDimensions]),dtype=tf.float32)
-data = tf.nn.embedding_lookup(wordVectors,input_data)
+data = tf.Variable(
+    tf.zeros([batchSize, maxSeqLength, numDimensions]), dtype=tf.float32)
+data = tf.nn.embedding_lookup(wordVectors, input_data)
 
 lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
 lstmCell = tf.contrib.rnn.DropoutWrapper(cell=lstmCell, output_keep_prob=0.25)
@@ -38,7 +39,7 @@ value = tf.transpose(value, [1, 0, 2])
 last = tf.gather(value, int(value.get_shape()[0]) - 1)
 prediction = (tf.matmul(last, weight) + bias)
 
-correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
+correctPred = tf.equal(tf.argmax(prediction, 1), tf.argmax(labels, 1))
 accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
 
 sess = tf.InteractiveSession()
@@ -49,23 +50,26 @@ saver.restore(sess, tf.train.latest_checkpoint('models'))
 
 strip_special_chars = re.compile("[^A-Za-z0-9 ]+")
 
+
 def cleanSentences(string):
     string = string.lower().replace("<br />", " ")
     return re.sub(strip_special_chars, "", string.lower())
 
+
 def getSentenceMatrix(sentence):
     arr = np.zeros([batchSize, maxSeqLength])
-    sentenceMatrix = np.zeros([batchSize,maxSeqLength], dtype='int32')
+    sentenceMatrix = np.zeros([batchSize, maxSeqLength], dtype='int32')
     cleanedSentence = cleanSentences(sentence)
     split = cleanedSentence.split()
-    for indexCounter,word in enumerate(split):
+    for indexCounter, word in enumerate(split):
         try:
-            sentenceMatrix[0,indexCounter] = wordsList.index(word)
+            sentenceMatrix[0, indexCounter] = wordsList.index(word)
         except ValueError:
-            sentenceMatrix[0,indexCounter] = 399999 #Vector for unkown words
+            sentenceMatrix[0, indexCounter] = 399999  # Vector for unkown words
     return sentenceMatrix
 
-def predictPositive(inputText = " "):
+
+def predictPositive(inputText=" "):
 
     inputMatrix = getSentenceMatrix(inputText)
 
@@ -74,6 +78,6 @@ def predictPositive(inputText = " "):
     # predictedSentiment[1] represents output score for negative sentiment
 
     if (predictedSentiment[0] > predictedSentiment[1]):
-        return True #Positive Sentiment
+        return True  # Positive Sentiment
     else:
-        return False #Negative Sentiment
+        return False  # Negative Sentiment
