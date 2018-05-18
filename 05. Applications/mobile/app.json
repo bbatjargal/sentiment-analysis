@@ -21,7 +21,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "infoPlist": {
+          "NSAppTransportSecurity" : {
+            "NSAllowsArbitraryLoads" : true,
+            "NSAllowsArbitraryLoadsForMedia": true, 
+            "NSAllowsArbitraryLoadsInWebContent": true, 
+            "NSExceptionAllowsInsecureHTTPLoads": true
+          }
+        }
+      }
     },
     "facebookScheme": "fb1972823036124484",
     "facebookAppId": "1972823036124484",

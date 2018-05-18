@@ -7,139 +7,52 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  AsyncStorage,
+  ActivityIndicator,
 } from 'react-native';
 
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    const data = [
-      {
-        profile: {
-          id: '1',
-          fullName: 'Boldkhuu Batbaatar',
-          picture:
-            'https://scontent-ort2-1.xx.fbcdn.net/v/t1.0-9/408563_10200961576779405_976972202_n.jpg?_nc_cat=0&oh=06844cd367cd8e188bad89b11b1af57a&oe=5B935B04',
-        },
-        posts: {
-          optimistic: 80,
-          pessimistic: 20,
-        },
-      },
-      {
-        profile: {
-          id: '2',
-          fullName: 'Unubold Tumenbayar',
-          picture:
-            'https://scontent-ort2-1.xx.fbcdn.net/v/t1.0-9/408563_10200961576779405_976972202_n.jpg?_nc_cat=0&oh=06844cd367cd8e188bad89b11b1af57a&oe=5B935B04',
-        },
-        posts: {
-          optimistic: 70,
-          pessimistic: 20,
-        },
-      },
-      {
-        profile: {
-          id: '3',
-          fullName: 'Alex Bayarsaikhan',
-          picture:
-            'https://scontent-ort2-1.xx.fbcdn.net/v/t1.0-9/408563_10200961576779405_976972202_n.jpg?_nc_cat=0&oh=06844cd367cd8e188bad89b11b1af57a&oe=5B935B04',
-        },
-        posts: {
-          optimistic: 60,
-          pessimistic: 20,
-        },
-      },
-      {
-        profile: {
-          id: '4',
-          fullName: 'John Doe',
-          picture:
-            'https://scontent-ort2-1.xx.fbcdn.net/v/t1.0-9/408563_10200961576779405_976972202_n.jpg?_nc_cat=0&oh=06844cd367cd8e188bad89b11b1af57a&oe=5B935B04',
-        },
-        posts: {
-          optimistic: 20,
-          pessimistic: 50,
-        },
-      },
-    ];
+    AsyncStorage.getItem('profile').then(data => {
+      this.state = {
+        profile: JSON.parse(data),
+      };
+    });
 
-    const optimistic = data.filter(({ posts }) => posts.optimistic >= posts.pessimistic);
-    const pessimistic = data.filter(({ posts }) => posts.optimistic < posts.pessimistic);
-
-    this.state = {
-      optimistic,
-      pessimistic,
-      selectedTab: 0,
-    };
-
-    this.renderItem = this.renderItem.bind(this);
-    this.changeTab = this.changeTab.bind(this);
+    this.goToFriends = this.goToFriends.bind(this);
   }
 
-  renderItem({ item, index }) {
-    const { optimistic, pessimistic } = item.posts;
-    const firstTabSelected = this.state.selectedTab === 0;
-    const percent =
-      firstTabSelected
-        ? optimistic / (optimistic + pessimistic)
-        : pessimistic / (optimistic + pessimistic);
-    const backgroundColor = firstTabSelected ? '#6BF178' : '#FF5964';
-
-    return (
-      <View style={styles.item}>
-        <View style={styles.number}>
-          <Text style={styles.numberText}>{index + 1}</Text>
-        </View>
-        <Image source={{ uri: item.profile.picture }} style={styles.avatar} />
-        <View style={styles.right}>
-          <Text style={styles.fullName}>{item.profile.fullName}</Text>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressBarLine, { flex: percent, backgroundColor }]} />
-          </View>
-        </View>
-      </View>
-    );
-  }
-
-  changeTab(number) {
-    this.setState({ selectedTab: number });
+  goToFriends() {
+    this.props.navigation.navigate('Friends');
   }
 
   render() {
-    const { optimistic, pessimistic } = this.state;
-    const selected = this.state.selectedTab === 0 ? optimistic : pessimistic;
-
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.list}>
-          <FlatList
-            data={selected}
-            renderItem={this.renderItem}
-            keyExtractor={item => item.profile.id}
+        <View style={styles.top}>
+          <Text style={styles.title}>{'Which person are you?'.toUpperCase()}</Text>
+          <Image
+            source={{
+              uri:
+                'https://lookaside.facebook.com/platform/profilepic/?asid=1787578441308166&height=50&width=50&ext=1526850530&hash=AeSE-G5stABqM_aW',
+            }}
+            style={styles.avatar}
           />
-        </ScrollView>
-        <View style={styles.tabBar}>
-          <TouchableOpacity
-            style={[styles.tabBarItem, { marginRight: 20 }]}
-            onPress={() => {
-              this.changeTab(0);
-            }}
-          >
-            <View style={[styles.button, { backgroundColor: '#6BF178' }]}>
-              <Text style={styles.buttonText}>OPTIMISTIC</Text>
+          <Text style={styles.fullName}>Boldkhuu Batbaatar</Text>
+        </View>
+        <View style={styles.bottom}>
+          <Text style={styles.percent}>85%</Text>
+          <Text style={styles.result}>optimistic</Text>
+          <TouchableOpacity style={styles.tabBarItem} onPress={this.goToFriends}>
+            <View style={styles.button}>
+              <Text style={styles.buttonText}>{'How about my friends?'.toUpperCase()}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.tabBarItem}
-            onPress={() => {
-              this.changeTab(1);
-            }}
-          >
-            <View style={[styles.button, { backgroundColor: '#FF5964' }]}>
-              <Text style={styles.buttonText}>PESSIMISTIC</Text>
-            </View>
-          </TouchableOpacity>
+          <Text style={styles.disclaimer}>
+            {'You can only see the your friends\rwho uses Mistic'}
+          </Text>
         </View>
       </View>
     );
@@ -149,72 +62,61 @@ export default class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
-    paddingTop: 22,
   },
-  item: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10,
-    padding: 20,
-    flexDirection: 'row',
+  top: {
+    backgroundColor: '#457B9D',
+    alignItems: 'center',
+    paddingTop: 50,
+  },
+  bottom: {
+    flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 6,
-  },
-  number: {
+    alignItems: 'center',
     justifyContent: 'center',
-    width: 35,
   },
-  numberText: {
-    fontSize: 30,
-    fontWeight: '700',
-    color: '#aaa',
+  title: {
+    letterSpacing: 1,
+    marginBottom: 30,
+    fontSize: 18,
+    color: '#fff',
   },
   avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginRight: 15,
-  },
-  right: {
-    flex: 1,
-    justifyContent: 'center',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 15,
   },
   fullName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    marginBottom: 6,
+    marginBottom: 40,
+    color: '#fff',
   },
-  progressBar: {
-    backgroundColor: '#aaa',
-    height: 6,
-    borderRadius: 3,
-    flexDirection: 'row',
+  percent: {
+    fontSize: 82,
+    color: '#888',
   },
-  progressBarLine: {
-    backgroundColor: '#6BF178',
-    height: 6,
-    borderRadius: 3,
-  },
-
-  tabBar: {
-    flexDirection: 'row',
-    padding: 20,
-  },
-  tabBarItem: {
-    flex: 1,
+  result: {
+    fontSize: 48,
+    color: '#888',
+    marginBottom: 50,
   },
   button: {
-    height: 40,
-    backgroundColor: '#fff',
-    borderRadius: 20,
+    height: 50,
+    paddingLeft: 24,
+    paddingRight: 24,
+    backgroundColor: '#457B9D',
+    borderRadius: 6,
     justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 10,
   },
   buttonText: {
     color: '#fff',
     textAlign: 'center',
     fontSize: 14,
     fontWeight: '700',
+  },
+  disclaimer: {
+    color: '#aaa',
   },
 });

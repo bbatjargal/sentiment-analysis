@@ -8,7 +8,7 @@ export default class AuthLoadingScreen extends React.Component {
   }
 
   async bootstrapAsync() {
-    this.props.navigation.navigate('App');
+    this.props.navigation.navigate('Auth');
   }
 
   render() {

@@ -2,11 +2,15 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { createSwitchNavigator, createStackNavigator } from 'react-navigation';
 import HomeScreen from './HomeScreen';
+import FriendsScreen from './FriendsScreen';
 import SignInScreen from './SignInScreen';
 import AuthLoadingScreen from './AuthLoadingScreen';
 
 const AppStack = createStackNavigator(
-  { Home: HomeScreen },
+  {
+    Home: HomeScreen,
+    Friends: FriendsScreen,
+  },
   {
     headerMode: 'none',
   },
@@ -20,11 +24,10 @@ const AuthStack = createStackNavigator(
 
 export default createSwitchNavigator(
   {
-    AuthLoading: AuthLoadingScreen,
     App: AppStack,
     Auth: AuthStack,
   },
   {
-    initialRouteName: 'AuthLoading',
+    initialRouteName: 'Auth',
   },
 );

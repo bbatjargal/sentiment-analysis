@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, AsyncStorage } from 'react-native';
 import Expo from 'expo';
+import { API_URL, FACEBOOK_APP_ID } from 'react-native-dotenv';
 
 export default class SignInScreen extends React.Component {
   constructor(props) {
@@ -10,29 +11,15 @@ export default class SignInScreen extends React.Component {
   }
 
   async handleLogin() {
-    const appId = 'app-id-must-be-here';
-    const permissions = ['public_profile', 'email', 'user_friends'];
-
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(appId, {
-      permissions,
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(FACEBOOK_APP_ID, {
+      permissions: ['public_profile', 'email', 'user_friends', 'user_posts'],
     });
 
-    // TODO:
-    // Send facebook token to the server and
-    // receive the results
-    const data = [
-      {
-        fullName: 'Boldkhuu Batbaatar',
-        posts: {
-          optimistic: 80,
-          pessimistic: 20,
-        },
-      },
-    ];
+    if (type !== 'success') return;
 
-    if (type === 'success') {
-      this.props.navigation.navigate('App', { data });
-    }
+    AsyncStorage.setItem('token', token).then(() => {
+      this.props.navigation.navigate('App');
+    });
   }
 
   render() {
@@ -40,15 +27,12 @@ export default class SignInScreen extends React.Component {
       <View style={styles.container}>
         <View style={styles.top}>
           <View style={styles.logo}>
-            <Text style={styles.logoText}>Optimistic</Text>
-            <Text style={styles.logoText}>Pessimistic</Text>
+            <Text style={styles.logoText}>mistic</Text>
           </View>
-          <Text style={styles.description}>
-            {'Do you want to know which of your\rFacebook friends are\roptimistic or pessimistic?'}
-          </Text>
+          <Text style={styles.description}>{'Are you optimistic or pessimistic?'}</Text>
         </View>
         <View style={styles.bottom}>
-          <Text style={styles.bottomText}>Start with</Text>
+          <Text style={styles.bottomText}>start with</Text>
           <TouchableOpacity onPress={this.handleLogin}>
             <View style={styles.button}>
               <Text style={styles.buttonText}>{'Login with Facebook'.toUpperCase()}</Text>
@@ -85,32 +69,32 @@ const styles = StyleSheet.create({
   logoText: {
     textAlign: 'center',
     color: '#35A7FF',
-    fontSize: 32,
-    fontWeight: '700',
-  },
-  logoSeparator: {
-    height: 1,
-    width: 160,
-    backgroundColor: '#35A7FF',
+    fontSize: 58,
+    fontWeight: '800',
   },
   description: {
     textAlign: 'center',
     color: '#888',
+    fontSize: 18,
   },
 
   bottomText: {
     color: '#fff',
-    marginBottom: 20,
+    marginBottom: 16,
+    fontSize: 18,
   },
   button: {
-    padding: 14,
-    paddingLeft: 20,
-    paddingRight: 20,
+    height: 46,
     backgroundColor: '#fff',
-    borderRadius: 6,
+    borderRadius: 23,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 24,
+    paddingRight: 24,
   },
   buttonText: {
     color: '#35A7FF',
     fontSize: 14,
+    fontWeight: '700',
   },
 });
