@@ -79,5 +79,4 @@ def predictPositive(inputText=" "):
 
     if (predictedSentiment[0] > predictedSentiment[1]):
         return True  # Positive Sentiment
-    else:
-        return False  # Negative Sentiment
+    return False  # Negative Sentiment
