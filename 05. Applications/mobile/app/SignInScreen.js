@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     flex: 1,
-    backgroundColor: '#35A7FF',
+    backgroundColor: '#457B9D',
     padding: 30,
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     textAlign: 'center',
-    color: '#35A7FF',
+    color: '#457B9D',
     fontSize: 58,
     fontWeight: '800',
   },
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     paddingRight: 24,
   },
   buttonText: {
-    color: '#35A7FF',
+    color: '#457B9D',
     fontSize: 14,
     fontWeight: '700',
   },

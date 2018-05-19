@@ -1,27 +1,38 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  AsyncStorage,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, View, Image, Text, TouchableOpacity, AsyncStorage } from 'react-native';
+import { API_URL } from 'react-native-dotenv';
+import Loader from './Loader';
 
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    AsyncStorage.getItem('profile').then(data => {
-      this.state = {
-        profile: JSON.parse(data),
-      };
-    });
+    this.state = {
+      profile: null,
+    };
 
     this.goToFriends = this.goToFriends.bind(this);
+  }
+
+  async componentDidMount() {
+    this.setState({
+      profile: await this.fetchData(),
+    });
+  }
+
+  async fetchData() {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const url = `${API_URL}/profile?accesstoken=${token}`;
+      const headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      };
+      let data = await fetch(url, headers);
+      return await data.json();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   goToFriends() {
@@ -29,22 +40,26 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
+    const { profile } = this.state;
+
+    if (!profile) return <Loader text="Analyzing" />;
+
+    const { positive, negative } = profile.posts;
+    const percent = Math.round(
+      (positive >= negative ? positive / (positive + negative) : negative / (positive + negative)) *
+        100,
+    );
+
     return (
       <View style={styles.container}>
         <View style={styles.top}>
           <Text style={styles.title}>{'Which person are you?'.toUpperCase()}</Text>
-          <Image
-            source={{
-              uri:
-                'https://lookaside.facebook.com/platform/profilepic/?asid=1787578441308166&height=50&width=50&ext=1526850530&hash=AeSE-G5stABqM_aW',
-            }}
-            style={styles.avatar}
-          />
-          <Text style={styles.fullName}>Boldkhuu Batbaatar</Text>
+          <Image source={{ uri: profile.picture }} style={styles.avatar} />
+          <Text style={styles.fullName}>{profile.name}</Text>
         </View>
         <View style={styles.bottom}>
-          <Text style={styles.percent}>85%</Text>
-          <Text style={styles.result}>optimistic</Text>
+          <Text style={styles.percent}>{percent}%</Text>
+          <Text style={styles.result}>{positive >= negative ? 'optimistic' : 'pessimistic'}</Text>
           <TouchableOpacity style={styles.tabBarItem} onPress={this.goToFriends}>
             <View style={styles.button}>
               <Text style={styles.buttonText}>{'How about my friends?'.toUpperCase()}</Text>

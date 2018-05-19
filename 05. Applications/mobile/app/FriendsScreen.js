@@ -8,9 +8,9 @@ import {
   Text,
   TouchableOpacity,
   AsyncStorage,
-  ActivityIndicator,
 } from 'react-native';
 import { API_URL } from 'react-native-dotenv';
+import Loader from './Loader';
 
 export default class FriendsScreen extends React.Component {
   constructor(props) {
@@ -25,7 +25,7 @@ export default class FriendsScreen extends React.Component {
   }
 
   async componentDidMount() {
-    const data = await this.fetchData();
+    const data = await this.fetchData() || [];
     const positive = data.filter(({ posts }) => posts.positive >= posts.pessimistic);
     const negative = data.filter(({ posts }) => posts.positive < posts.negative);
     this.setState({
@@ -81,7 +81,7 @@ export default class FriendsScreen extends React.Component {
     const { positive, negative } = this.state;
 
     if (positive === undefined || negative === undefined) {
-      return <ActivityIndicator />;
+      return <Loader text="Analyzing" />;
     }
 
     const selected = this.state.selectedTab === 0 ? positive : negative;
@@ -127,6 +127,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#eee',
     paddingTop: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   item: {
     marginLeft: 10,

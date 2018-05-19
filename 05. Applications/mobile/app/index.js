@@ -4,7 +4,6 @@ import { createSwitchNavigator, createStackNavigator } from 'react-navigation';
 import HomeScreen from './HomeScreen';
 import FriendsScreen from './FriendsScreen';
 import SignInScreen from './SignInScreen';
-import AuthLoadingScreen from './AuthLoadingScreen';
 
 const AppStack = createStackNavigator(
   {
