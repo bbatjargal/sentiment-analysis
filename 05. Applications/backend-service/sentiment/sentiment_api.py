@@ -3,17 +3,33 @@
 """
 
 import web
-#imprt sys,os
 import json
 import sentiment_model as model
 from fb_util import FbUserApi
 from joblib import Parallel, delayed
 
 urls = (
+    '/profile', 'Profile',
     '/sentiment', 'SentimentApi',
     '/getfriendinfo', 'FriendInfo'
 )
 app = web.application(urls, globals())
+
+
+class Profile:
+    def GET(self):
+        web.header('Content-Type', 'application/json')
+        user_data = web.input()
+        fbUser = FbUserApi(user_data.accesstoken)
+        posts = fbUser.get_own_posts()
+        positive = sum(model.predictPositive(inputText=post)
+                       for post in posts)
+        result = {
+            'positive': positive,
+            'negative': len(posts) - positive
+        }
+
+        return json.dumps(result)
 
 
 class SentimentApi:
@@ -37,6 +53,7 @@ class FriendInfo:
 
         return json.dumps(result)
 
+
 class Sentiment:
     def predictAll(self, friends):
         for friend in friends:
@@ -44,7 +61,8 @@ class Sentiment:
             lenPosts = len(friend["posts"])
 
             if lenPosts > 0:
-                results = Parallel(n_jobs=lenPosts, backend='threading')(delayed(self.processPredict)(item) for item in friend["posts"])
+                results = Parallel(n_jobs=lenPosts, backend='threading')(
+                    delayed(self.processPredict)(item) for item in friend["posts"])
                 positive = sum(1 for x in results if x == True)
 
             friend["posts"] = {
@@ -55,6 +73,7 @@ class Sentiment:
 
     def processPredict(self, item):
         return model.predictPositive(inputText=item)
+
 
 if __name__ == "__main__":
     app.run()

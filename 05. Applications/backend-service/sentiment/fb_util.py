@@ -1,18 +1,37 @@
 from facebook import get_user_from_cookie, GraphAPI
 from joblib import Parallel, delayed
-#import multiprocessing
+from langdetect import detect
+
 
 class FbUserApi(object):
     def __init__(self, access_token):
         self.graph = GraphAPI(access_token=access_token, version='3.0')
+
+    def get_own_posts(self):
+        posts = self.graph.get_connections_with_params(
+            id='me', connection_name='posts', params='?fields=message&limit=100')
+        posts = posts['data']
+
+        def check(x):
+            try:
+                return 'message' in x and \
+                    detect(x['message']) == 'en' and \
+                    len(x['message']) <= 250
+            except:
+                return False
+        posts = list(filter(check, posts))
+        posts = list(map(lambda obj: obj['message'], posts))
+
+        return posts
 
     def getFriendsInfo(self):
         # Get the user's friends.
         user_friends = self.graph.get_connections_with_params(
             id='me', connection_name='friends', params='?fields=picture{url},name')
 
-        #multiprocessing.cpu_count()
-        friends = Parallel(n_jobs=10, backend='threading')(delayed(self.processFriendInfo)(item) for item in user_friends['data'])
+        # multiprocessing.cpu_count()
+        friends = Parallel(n_jobs=10, backend='threading')(
+            delayed(self.processFriendInfo)(item) for item in user_friends['data'])
         return friends
 
     def processFriendInfo(self, item):
