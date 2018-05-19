@@ -7,6 +7,11 @@ class FbUserApi(object):
     def __init__(self, access_token):
         self.graph = GraphAPI(access_token=access_token, version='3.0')
 
+    def get_profile(self):
+        profile = self.graph.get_connections_with_params(
+            id='me', connection_name='', params='?fields=name,picture.type(large){url}')
+        return profile
+
     def get_own_posts(self):
         posts = self.graph.get_connections_with_params(
             id='me', connection_name='posts', params='?fields=message&limit=100')

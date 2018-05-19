@@ -21,15 +21,17 @@ class Profile:
         web.header('Content-Type', 'application/json')
         user_data = web.input()
         fbUser = FbUserApi(user_data.accesstoken)
+        profile = fbUser.get_profile()
         posts = fbUser.get_own_posts()
         positive = sum(model.predictPositive(inputText=post)
                        for post in posts)
-        result = {
+        profile['picture'] = profile['picture']['data']['url']
+        profile['posts'] = {
             'positive': positive,
             'negative': len(posts) - positive
         }
 
-        return json.dumps(result)
+        return json.dumps(profile)
 
 
 class SentimentApi:
