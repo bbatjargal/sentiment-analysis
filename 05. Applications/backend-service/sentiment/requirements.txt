@@ -22,7 +22,7 @@ six==1.11.0
 tensorboard==1.8.0
 tensorflow==1.8.0
 termcolor==1.1.0
-urllib3==1.22
+urllib3==1.26.5
 web.py==0.40.dev1
 Werkzeug==0.14.1
 wrapt==1.10.11
